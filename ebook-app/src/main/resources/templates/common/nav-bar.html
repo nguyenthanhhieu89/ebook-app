@@ -1,0 +1,58 @@
+<div>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/static">
+            <img alt="Doc sach 24h" th:src="@{~/img/logo.svg}">
+        </a>
+        <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler"
+                data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="navbar-nav mr-auto">
+                <div class="nav-choice">
+                    <i class="fas fa-book"></i>
+                    <button aria-expanded="false" class="btn hide-bg" onclick="clickBookLib()" type="button">Kho sách
+                    </button>
+                </div>
+                <div class="nav-choice">
+                    <i class="fas fa-box-open"></i>
+                    <button aria-expanded="false" class="btn hide-bg" type="button">Tủ sách cá nhân</button>
+                </div>
+                <div class="nav-choice">
+                    <i class="fas fa-book-medical"></i>
+                    <a href="admin/insert-book-page">
+                        <button aria-expanded="false" class="btn hide-bg" type="button">Thêm sách mới</button>
+                    </a>
+                </div>
+                <div class="nav-choice">
+                    <i class="fas fa-info-circle"></i>
+                    <button aria-expanded="false" class="btn hide-bg" type="button">Giới thiệu</button>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button aria-expanded="false" aria-haspopup="true" class="btn btn-outline-success dropdown-toggle"
+                        data-toggle="dropdown" id="dropdownMenuButton" th:text="${session.email}" type="button">
+                </button>
+
+                <div aria-labelledby="dropdownMenuButton" class="dropdown-menu">
+                    <a class="dropdown-item" th:href="@{~/authen/change-pass-page}">Đổi mật khẩu</a>
+                    <form action="/logout" class="dropdown-item" method="post">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-power-off"></i>
+                            <button class="ml-1" style="outline: transparent !important; border: none !important; background: none !important;" type="submit">
+                                <b>Logout</b>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+<script>
+    $("#btn-logout").on("click", function () {
+        MyAjax.post("/logout")
+    })
+</script>

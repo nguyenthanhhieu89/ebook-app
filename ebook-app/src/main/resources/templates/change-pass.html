@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<!--suppress HtmlRequiredTitleElement -->
+<head th:replace="common/head.html"></head>
+<body>
+<div th:replace="common/simple-nav-bar.html"></div>
+<div class="login-layout">
+    <div class="login-form register">
+        <form>
+            <h4>Thay đổi mật khẩu</h4>
+            <div class="form-group">
+                <label for="register-email">Email</label>
+                <input class="form-control" disabled="disabled" id="login-email"
+                       placeholder="Nhập Email" th:value="${session.email}" type="email">
+            </div>
+            <div class="form-group">
+                <label for="old-password">Mật khẩu cũ</label>
+                <div class="input-group mb-3">
+                    <input aria-describedby="basic-addon2" autocomplete="off" class="form-control password"
+                           id="old-password" placeholder="Nhập mật khẩu cũ" type="password">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" id="btn-old-pass" type="button"><i
+                                class="far fa-eye"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="new-password">Mật khẩu mới</label>
+                <div class="input-group mb-3">
+                    <input aria-describedby="basic-addon2" autocomplete="off" class="form-control password"
+                           id="new-password" placeholder="Nhập mật khẩu mới" type="password">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" id="btn-new-pass" type="button"><i
+                                class="far fa-eye"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="re-new-password">Nhập lại mật khẩu mới</label>
+                <div class="input-group mb-3">
+                    <input aria-describedby="basic-addon2" class="form-control password" id="re-new-password"
+                           placeholder="Nhập lại mật khẩu mới" type="password">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" id="btn-re-new-pass" type="button"><i
+                                class="far fa-eye"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-outline-success mt-3" id="btn-change-pass" type="button">Đổi mật khẩu</button>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    const btnOldPassword = $("#btn-old-pass")
+    const btnNewPassword = $("#btn-new-pass")
+    const btnReNewPassword = $("#btn-re-new-pass")
+    const inputOldPass = $("#old-password")
+    const inputNewPass = $("#new-password")
+    const inputReNewPass = $("#re-new-password")
+    const loginEmail = $("#login-email")
+
+    btnOldPassword
+        .on("mousedown", function () {
+            inputOldPass.attr("type", "text")
+        })
+
+    btnOldPassword.on("mouseup", function () {
+        inputOldPass.attr("type", "password")
+    })
+
+    btnNewPassword
+        .on("mousedown", function () {
+            inputNewPass.attr("type", "text")
+        })
+
+    btnNewPassword.on("mouseup", function () {
+        inputNewPass.attr("type", "password")
+    })
+
+    btnReNewPassword
+        .on("mousedown", function () {
+            inputReNewPass.attr("type", "text")
+        })
+
+    btnReNewPassword.on("mouseup", function () {
+        inputReNewPass.attr("type", "password")
+    })
+
+    $("#btn-change-pass").on("click", function () {
+        if (inputNewPass.val() !== inputReNewPass.val()) {
+            MyAjax.notify("Mật khẩu mới không khớp nhau!", "error")
+            return;
+        } else if (inputOldPass.val() === inputNewPass.val()) {
+            MyAjax.notify("Mật khẩu cũ và mới cần khác giá trị!", "error")
+            return;
+        }
+
+        let changePassRequest = {
+            email: loginEmail.val(),
+            oldPassword: inputOldPass.val(),
+            newPassword: inputNewPass.val(),
+        }
+
+        MyAjax.post("/authen/change-pass", JSON.stringify(changePassRequest),
+            function () {
+                MyAjax.notify("Đổi mật khẩu thành công!", "success")
+                window.location.href = window.location.origin + "/authen/login-page"
+            }, function (xhr) {
+                const status = xhr.status
+                if (status && status === 400) {
+                    MyAjax.notify("Vui lòng nhập email, mật khẩu cũ và mật khẩu mới!", "error")
+                } else {
+                    MyAjax.notify("Đổi mật khẩu thất bại!", "error")
+                }
+            })
+    })
+
+</script>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<!--suppress HtmlRequiredTitleElement -->
+<head th:replace="common/head.html"></head>
+<body>
+<div th:replace="common/simple-nav-bar.html"></div>
+<div class="login-layout">
+    <div class="login-form register">
+        <form>
+            <h4>Đăng Ký</h4>
+            <div class="form-group">
+                <label for="register-email">Email</label>
+                <input class="form-control" id="register-email" placeholder="Nhập Email"
+                       type="email">
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <div class="input-group mb-3">
+                    <input aria-describedby="basic-addon2" autocomplete="off" class="form-control"
+                           id="register-password" placeholder="Nhập mật khẩu" type="password">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" id="btn-show-password" type="button"><i
+                                class="far fa-eye"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="re-register-password">Nhập lại password</label>
+                <div class="input-group mb-3">
+                    <input aria-describedby="basic-addon2" class="form-control" id="re-register-password"
+                           placeholder="Nhập lại mật khẩu" type="password">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" id="btn-re-show-password" type="button"><i
+                                class="far fa-eye"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-outline-success mt-3" id="btn-register" type="button">Đăng Ký</button>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    const inputEmail = $("#register-email")
+    const inputPassword = $("#register-password")
+    const inputRePassword = $("#re-register-password")
+    const btnRegister = $("#btn-register")
+    const btnShowPassword = $("#btn-show-password")
+    const btnReShowPassword = $("#btn-re-show-password")
+
+    btnShowPassword
+        .on("mousedown", function () {
+            inputPassword.attr("type", "text")
+        })
+
+    btnShowPassword.on("mouseup", function () {
+        inputPassword.attr("type", "password")
+    })
+
+    btnReShowPassword
+        .on("mousedown", function () {
+            inputRePassword.attr("type", "text")
+        })
+    btnReShowPassword.on("mouseup", function () {
+        inputRePassword.attr("type", "password")
+    })
+
+    let registerRequest = {
+        email: null,
+        password: null
+    }
+
+    btnRegister.on("click", function () {
+        sendRegisterRequest()
+    })
+
+    inputEmail.on("keypress", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+            sendRegisterRequest()
+        }
+    })
+    inputPassword.on("keypress", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+            sendRegisterRequest()
+        }
+    })
+    inputRePassword.on("keypress", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+            sendRegisterRequest()
+        }
+    })
+
+    function sendRegisterRequest() {
+        const password = inputPassword.val()
+        const rePassword = inputRePassword.val()
+        if (password !== rePassword) {
+            MyAjax.notify("Password không hợp lệ!", "warning")
+            return
+        }
+        registerRequest.email = inputEmail.val()
+        registerRequest.password = password
+        MyAjax.post("/authen/register", JSON.stringify(registerRequest),
+            function () {
+                MyAjax.notify("Đăng ký thành công!", "success")
+                window.location.href = window.location.origin + "/authen/login-page"
+            },
+            function (xhr) {
+                const status = xhr.status
+                if (status && status === 400) {
+                    MyAjax.notify("Vui lòng nhập email và password!", "error")
+                } else if (status && status === 409) {
+                    MyAjax.notify("Email đã tồn tại trong hệ thống!", "error")
+                } else {
+                    MyAjax.notify("Lỗi hệ thống!", "error")
+                }
+            }
+        )
+    }
+</script>
+</html>
