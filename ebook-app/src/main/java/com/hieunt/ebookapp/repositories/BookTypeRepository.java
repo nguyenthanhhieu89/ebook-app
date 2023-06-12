@@ -8,4 +8,6 @@ import java.util.Set;
 public interface BookTypeRepository extends MongoRepository<BookType, String> {
     BookType findByTypeName(String name);
     Set<BookType> findByTypeNameIn(Set<String> typeNames);
+
+    Set<BookType> findByIdIn(Set<String> ids);
 }

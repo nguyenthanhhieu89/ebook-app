@@ -1,21 +1,25 @@
 package com.hieunt.ebookapp.controllers;
 
 import com.hieunt.ebookapp.entities.Author;
+import com.hieunt.ebookapp.entities.Book;
 import com.hieunt.ebookapp.payloads.AddAuthorRequest;
 import com.hieunt.ebookapp.services.BookService;
+import com.hieunt.ebookapp.services.BookTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
+@RequestMapping("/api")
 public class BookController {
 
     @Autowired
     BookService bookService;
+
+    @Autowired
+    BookTypeService bookTypeService;
 
     @PostMapping(value = "/authors")
     public ResponseEntity<Author> createAuthor(@RequestBody AddAuthorRequest request) {
@@ -28,4 +32,35 @@ public class BookController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping(value = "/books")
+    public ResponseEntity<?> createBook(@RequestBody Book book) {
+        try {
+            return ResponseEntity.ok(bookService.insertNewBook(book));
+        } catch (HttpClientErrorException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/book-types")
+    public ResponseEntity<?> getAllBookType() {
+        try {
+            return ResponseEntity.ok(bookTypeService.getAllBookType());
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/authors")
+    public ResponseEntity<?> getAllAuthors() {
+        try {
+            return new ResponseEntity<>(bookService.getAllAuthors(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

@@ -20,8 +20,8 @@
                 <input class="form-control" id="book-avatar" placeholder="Nhập URL ảnh bìa" type="text">
             </div>
             <div class="form-group">
-                <label for="book-url">Địa chỉ file PDF</label>
-                <input class="form-control" id="book-url" placeholder="Địa chỉ file PDF" type="text">
+                <label for="book-url">Địa chỉ file</label>
+                <input class="form-control" id="book-url" placeholder="Địa chỉ file" type="text">
             </div>
             <div class="form-group">
                 <label for="total-chap">Số chương</label>
@@ -30,10 +30,7 @@
             <div class="form-group mb-3">
                 <label for="book-type">Thể loại sách</label>
                 <select id="book-type" class="form-select custom-select" multiple>
-                    <option value="0">Hiện đại</option>
-                    <option value="1">Xuyên không</option>
-                    <option value="2">Cổ đại Ngôn tình</option>
-                    <option value="3">Happy Ending</option>
+
                 </select>
             </div>
             <div class="form-group mb-3">
@@ -76,23 +73,87 @@
 <script>
     $("#btn-add-author").on("click", function () {
         $("#modal-add-author").modal("show")
+        $("#author-name").val("")
     })
 
     $("#btn-save-author").on("click",function () {
         const data = {
-            authorName : $("#author-name").val()
+            authorName: $("#author-name").val()
         }
 
-        MyAjax.post("/authors",JSON.stringify(data),
-        function () {
-            $("#modal-add-author").modal("hide")
-            MyAjax.notify("Tạo mới tác giả thành cong!","success")
-            //TODO : reload mục tác giả để nó có thông tin tác giả mới
-        },
-        function (xhr) {
-            MyAjax.notify("Tạo mới tác giả thất bại!","error")
-        })
+        MyAjax.post("/api/authors", JSON.stringify(data),
+            function () {
+                $("#modal-add-author").modal("hide")
+                MyAjax.notify("Tạo mới tác giả thành cong!", "success")
+                loadAuthors()
+            },
+            function (xhr) {
+                MyAjax.notify("Tạo mới tác giả thất bại!", "error")
+            })
     })
+
+    const bookTypeElement = $("#book-type")
+    const authorElement = $("#book-author")
+    const btnSave = $("#btn-save")
+
+    btnSave.on("click", function () {
+        const bookReq = {
+            name: $("#book-name").val(),
+            intro: $("#book-intro").val(),
+            avatar: $("#book-avatar").val(),
+            url: $("#book-url").val(),
+            totalView: 0,
+            totalChapter: $("#total-chap").val(),
+            bookTypes: bookTypeElement.val(),
+            authorIds: authorElement.val()
+        }
+
+        MyAjax.post("/api/books", JSON.stringify(bookReq),
+            function () {
+                MyAjax.notify("Tạo mới sách thành công!");
+                window.location.href = window.location.origin;
+            }, function (xhr) {
+                const statusCode = xhr.status
+                if (statusCode && statusCode === 400) {
+                    MyAjax.notify('Thông tin sách không hợp lệ! ', 'error')
+                } else {
+                    MyAjax.notify('Lỗi hệ thống! ', 'error')
+                }
+            })
+
+    })
+
+
+    $(document).ready(function () {
+        loadBookTypes()
+        loadAuthors()
+    })
+
+    function loadBookTypes() {
+        bookTypeElement.html("")
+        MyAjax.get("/api/book-types",
+            function (data) {
+                for (const booktype of data) {
+                    bookTypeElement.append('<option value="' + booktype.id + '">' + booktype.typeName + '</option>'
+                    )
+                }
+            }), function (xhr) {
+            MyAjax.notify("Không lấy được thông tin về thể loại", "error")
+        }
+    }
+
+    function loadAuthors() {
+        authorElement.html("")
+        MyAjax.get("/api/authors",
+            function (data) {
+                for (const author of data) {
+                    authorElement.append('<option value="' + author.id + '">' + author.name + '</option>'
+                    )
+                }
+            }), function (xhr) {
+            MyAjax.notify("Không lấy được thông tin về tác giả", "error")
+        }
+    }
 </script>
 
 <!--<div th:replace="common/footer.html"></div>-->

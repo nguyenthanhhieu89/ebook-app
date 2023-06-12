@@ -27,4 +27,8 @@ public class BookTypeService {
             bookTypeRepository.saveAll(bookTypeSet);
         });
     }
+
+   public Set<BookType> getAllBookType () {
+        return new HashSet<>(bookTypeRepository.findAll()) ;
+    }
 }
