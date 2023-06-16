@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,7 +30,9 @@ public class BookTypeService {
         });
     }
 
-   public Set<BookType> getAllBookType () {
-        return new HashSet<>(bookTypeRepository.findAll()) ;
+    public List<BookType> getAllBookType() {
+        List<BookType> bookTypes = bookTypeRepository.findAll();
+        bookTypes.sort(Comparator.comparing(BookType::getTypeName));
+        return bookTypes;
     }
 }

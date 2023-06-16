@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<!--suppress HtmlRequiredTitleElement -->
+<head th:replace="common/head.html"></head>
+<body>
+<div th:replace="common/simple-nav-bar.html"></div>
+<div class="login-layout">
+    <div class="login-form">
+        <form>
+            <h4>Reset password</h4>
+            <div class="form-group">
+                <label for="input-email">Username hoặc E-mail</label>
+                <input class="form-control" id="input-email" placeholder="Nhập E-mail"
+                       type="email">
+            </div>
+            <button class="btn btn-outline-primary" id="btn-reset-pass" type="button">Reset password</button>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    $("#btn-reset-pass").on("click", function () {
+        const data = {
+            email: $("#input-email").val()
+        }
+        MyAjax.put("/authen/reset-pass", JSON.stringify(data),
+            function () {
+            MyAjax.notify("Đặt lại mật khẩu thành công, vui lòng kiểm tra email", "success")
+            window.location.href = window.location.origin + "/auth/login-page";
+        }, function (xhr) {
+            MyAjax.notify("Đặt mật khẩu thất bại, vui lòng thử lại!", "error")
+        })
+    })
+</script>
+</html>

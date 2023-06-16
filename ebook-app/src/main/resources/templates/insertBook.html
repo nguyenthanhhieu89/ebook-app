@@ -5,45 +5,54 @@
 <div th:replace="common/nav-bar.html"></div>
 <div class="container mt-100px">
     <div class="row justify-content-center">
-        <form class="w-50">
+        <form class="w-100">
             <h4 class="w-100 text-center">Thêm sách mới</h4>
-            <div class="form-group">
-                <label for="book-name">Tên cuốn sách</label>
-                <input class="form-control" id="book-name" placeholder="Nhập tên cuốn sách" type="text">
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="book-name">Tên cuốn sách</label>
+                        <input class="form-control" id="book-name" placeholder="Nhập tên cuốn sách" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-intro">Giới thiệu sách</label>
+                        <textarea class="form-control" id="book-intro" placeholder="Giới thiệu sách" style="height: 250px"
+                                  type="text"></textarea>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="book-avatar">Ảnh bìa</label>
+                        <input class="form-control" id="book-avatar" placeholder="Nhập URL ảnh bìa" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-url">Địa chỉ file</label>
+                        <input class="form-control" id="book-url" placeholder="Địa chỉ file" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="total-chap">Số chương</label>
+                        <input class="form-control" id="total-chap" placeholder="Số chương" type="number">
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="book-intro">Giới thiệu sách</label>
-                <textarea class="form-control" id="book-intro" placeholder="Giới thiệu sách" type="text"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="book-avatar">Ảnh bìa</label>
-                <input class="form-control" id="book-avatar" placeholder="Nhập URL ảnh bìa" type="text">
-            </div>
-            <div class="form-group">
-                <label for="book-url">Địa chỉ file</label>
-                <input class="form-control" id="book-url" placeholder="Địa chỉ file" type="text">
-            </div>
-            <div class="form-group">
-                <label for="total-chap">Số chương</label>
-                <input class="form-control" id="total-chap" placeholder="Số chương" type="number">
-            </div>
-            <div class="form-group mb-3">
-                <label for="book-type">Thể loại sách</label>
-                <select id="book-type" class="form-select custom-select" multiple>
-
-                </select>
-            </div>
-            <div class="form-group mb-3">
-                <label for="book-author">Tác giả</label>
-                <select id="book-author" class="form-select custom-select" multiple>
-                    <option value="0">Xuân Diệu</option>
-                    <option value="1">Abc</option>
-                </select>
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group mb-3">
+                        <label for="book-type">Thể loại sách</label>
+                        <select class="form-select custom-select" id="book-type" multiple style="height: 320px">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group mb-3">
+                        <label for="book-author">Tác giả</label>
+                        <select class="form-select custom-select" id="book-author" multiple style="height: 320px">
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="w-100 d-flex justify-content-end">
                 <button class="btn btn-outline-success w-150px mr-2" id="btn-add-author" type="button">Thêm tác giả</button>
                 <button class="btn btn-outline-primary w-150px" id="btn-save" type="button">Save</button>
-
             </div>
         </form>
     </div>

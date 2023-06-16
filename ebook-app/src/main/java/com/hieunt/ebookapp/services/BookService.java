@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -32,12 +31,18 @@ public class BookService {
         if (request == null || !(StringUtils.hasText(request.getAuthorName()))) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
         }
-        return authorRepository.save(new Author(request.getAuthorName()));
+        String authorName =request.getAuthorName();
+        Optional<Author> author = authorRepository.findByName(authorName);
+        if (author.isPresent()){
+            throw new RuntimeException("Author is exist");
+        }
+        return authorRepository.save(new Author(authorName));
     }
 
-    public Set<Author> getAllAuthors() {
-
-        return new HashSet<>(authorRepository.findAll());
+    public List<Author> getAllAuthors() {
+        List<Author> authors = authorRepository.findAll();
+        authors.sort(Comparator.comparing(Author::getName));
+        return authors;
     }
 
     public Book insertNewBook(Book bookRequest) {

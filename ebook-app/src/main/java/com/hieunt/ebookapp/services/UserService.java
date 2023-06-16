@@ -4,6 +4,7 @@ import com.hieunt.ebookapp.entities.User;
 import com.hieunt.ebookapp.payloads.ChangePassRequest;
 import com.hieunt.ebookapp.payloads.CreateUserRequest;
 import com.hieunt.ebookapp.payloads.LoginRequest;
+import com.hieunt.ebookapp.payloads.ResetPassRequest;
 import com.hieunt.ebookapp.repositories.RoleRepository;
 import com.hieunt.ebookapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class UserService {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    SimpleMailService simpleMailService;
 
     @PostConstruct
     public void initAdmin() {
@@ -92,5 +96,20 @@ public class UserService {
         } catch (Exception e) {
             throw new AuthenticationServiceException(e.getMessage());
         }
+    }
+
+    public void resetPass(ResetPassRequest request) {
+        if (request == null || !StringUtils.hasText(request.getEmail())) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+        String email = request.getEmail();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+        String newpass = String.valueOf(System.currentTimeMillis());
+        simpleMailService.sendMailMessage(email, "Đặt lại mật khẩu", "Mật khẩu mới của bạn là: " + newpass);
+        user.setPassword(passwordEncoder.encode(newpass));
+        userRepository.save(user);
     }
 }
