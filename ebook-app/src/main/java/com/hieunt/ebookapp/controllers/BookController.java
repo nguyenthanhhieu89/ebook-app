@@ -3,6 +3,7 @@ package com.hieunt.ebookapp.controllers;
 import com.hieunt.ebookapp.entities.Author;
 import com.hieunt.ebookapp.entities.Book;
 import com.hieunt.ebookapp.payloads.AddAuthorRequest;
+import com.hieunt.ebookapp.payloads.BookGeneralResponse;
 import com.hieunt.ebookapp.services.BookService;
 import com.hieunt.ebookapp.services.BookTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,5 +65,12 @@ public class BookController {
         }
     }
 
-
+    @GetMapping(value = "/books/general")
+    public ResponseEntity<BookGeneralResponse> getGeneralResponse() {
+        try {
+            return new ResponseEntity<>(bookService.getGeneralBooks(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

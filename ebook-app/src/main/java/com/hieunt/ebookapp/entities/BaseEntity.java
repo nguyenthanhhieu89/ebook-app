@@ -13,7 +13,7 @@ import java.util.Date;
 @Setter
 public abstract class BaseEntity {
     @CreatedDate
-    private Date createDate;
+    private Date createdDate;
 
     @LastModifiedDate
     private Date updatedDate;

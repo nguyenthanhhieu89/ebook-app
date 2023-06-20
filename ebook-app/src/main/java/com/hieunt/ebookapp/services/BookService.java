@@ -4,9 +4,11 @@ import com.hieunt.ebookapp.entities.Author;
 import com.hieunt.ebookapp.entities.Book;
 import com.hieunt.ebookapp.entities.BookType;
 import com.hieunt.ebookapp.payloads.AddAuthorRequest;
+import com.hieunt.ebookapp.payloads.BookGeneralResponse;
 import com.hieunt.ebookapp.repositories.AuthorRepository;
 import com.hieunt.ebookapp.repositories.BookRepository;
 import com.hieunt.ebookapp.repositories.BookTypeRepository;
+import com.hieunt.ebookapp.repositories.CustomBookRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,12 +16,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BookService {
     @Autowired
     BookRepository bookRepository;
+
+    @Autowired
+    CustomBookRepository customBookRepository;
 
     @Autowired
     AuthorRepository authorRepository;
@@ -63,5 +71,19 @@ public class BookService {
         Book book = new Book();
         BeanUtils.copyProperties(bookRequest, book);
         return bookRepository.save(book);
+    }
+
+    public BookGeneralResponse getGeneralBooks() {
+        List<Book> latestBook = customBookRepository.getBookBy(12, "updatedDate");
+        List<Book> hottestBook = customBookRepository.getBookBy(12, "totalView");
+        BookGeneralResponse response = new BookGeneralResponse();
+        if (!latestBook.isEmpty()) {
+            response.setLatestBooks(latestBook);
+            response.setBookSuggestion(latestBook.get(0));
+        }
+        if (!hottestBook.isEmpty()) {
+            response.setHottestBooks(hottestBook);
+        }
+        return response;
     }
 }
