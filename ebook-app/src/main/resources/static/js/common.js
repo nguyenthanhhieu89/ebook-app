@@ -66,13 +66,17 @@ const MyAjax = function () {
                 loader : false
             })
     }
+    function getBookDetail(id) {
+        window.location.href = window.location.origin + `/book-page/${id}`
+    }
 
     return {
         get: doGet,
         post: doPost,
         put: doPut,
         delete: doDelete,
-        notify : toastShowNotification
+        notify : toastShowNotification,
+        getBookDetail : getBookDetail
     }
 }();
 

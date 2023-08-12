@@ -3,7 +3,9 @@ package com.hieunt.ebookapp.controllers;
 import com.hieunt.ebookapp.entities.Author;
 import com.hieunt.ebookapp.entities.Book;
 import com.hieunt.ebookapp.payloads.AddAuthorRequest;
+import com.hieunt.ebookapp.payloads.BookDetailResponse;
 import com.hieunt.ebookapp.payloads.BookGeneralResponse;
+import com.hieunt.ebookapp.payloads.BookHottestResponse;
 import com.hieunt.ebookapp.services.BookService;
 import com.hieunt.ebookapp.services.BookTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,27 @@ public class BookController {
         try {
             return new ResponseEntity<>(bookService.getGeneralBooks(), HttpStatus.OK);
         } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/books/list-hottest")
+    public ResponseEntity<BookHottestResponse> getListBookHottest(){
+        try {
+            return new ResponseEntity<>(bookService.getListBookHottest(),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/books/{id}")
+    public ResponseEntity<BookDetailResponse> getBookDetailBy(@PathVariable String id){
+        try {
+            BookDetailResponse response = bookService.getBookById(id);
+            return ResponseEntity.ok(response);
+        }catch (HttpClientErrorException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

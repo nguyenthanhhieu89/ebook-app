@@ -4,7 +4,9 @@ import com.hieunt.ebookapp.entities.Author;
 import com.hieunt.ebookapp.entities.Book;
 import com.hieunt.ebookapp.entities.BookType;
 import com.hieunt.ebookapp.payloads.AddAuthorRequest;
+import com.hieunt.ebookapp.payloads.BookDetailResponse;
 import com.hieunt.ebookapp.payloads.BookGeneralResponse;
+import com.hieunt.ebookapp.payloads.BookHottestResponse;
 import com.hieunt.ebookapp.repositories.AuthorRepository;
 import com.hieunt.ebookapp.repositories.BookRepository;
 import com.hieunt.ebookapp.repositories.BookTypeRepository;
@@ -16,10 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -86,4 +86,28 @@ public class BookService {
         }
         return response;
     }
+    public BookHottestResponse getListBookHottest(){
+        List<Book> hottestBook = customBookRepository.getBookBy(15,"totalView");
+        BookHottestResponse response = new BookHottestResponse();
+        if (!hottestBook.isEmpty()) {
+            response.setHottestBook(hottestBook);
+        }
+        return response;
+    }
+
+    public BookDetailResponse getBookById(String id){
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isEmpty()){
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+        }
+        Book book = bookOptional.get();
+        Set<String> bookTypes = bookTypeRepository.findByIdIn(new HashSet<>(book.getBookTypes()))
+                .stream().map(BookType::getTypeName).collect(Collectors.toSet());
+        Set<String> authors = authorRepository.findByIdIn(new HashSet<>(book.getAuthorIds()))
+                .stream().map(Author::getName).collect(Collectors.toSet());
+        String types = String.join(", ", bookTypes);
+        String author = String.join(", ",authors);
+        return new BookDetailResponse(book,author,types);
+    }
+
 }

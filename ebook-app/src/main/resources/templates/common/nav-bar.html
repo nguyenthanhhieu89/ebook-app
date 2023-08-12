@@ -55,4 +55,8 @@
     $("#btn-logout").on("click", function () {
         MyAjax.post("/logout")
     })
+
+    function clickBookLib() {
+        window.location.href = window.location.origin + `/book-library`
+    }
 </script>

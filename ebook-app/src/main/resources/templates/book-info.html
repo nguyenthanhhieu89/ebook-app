@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<!--suppress HtmlRequiredTitleElement -->
+<head th:replace="common/head.html"></head>
+<body style="height: auto">
+<div th:replace="common/nav-bar.html"></div>
+<div class="container mt-100px">
+    <div class="row">
+        <div class="col-lg-8 col-md-9 col-12">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-12" id="book-avt">
+
+                </div>
+                <div class="col-lg-9 col-md-8 col-12 detail-info">
+                    <h4 id="book-name"></h4>
+                    <div class="d-flex">
+                        <h6 class="mr-2">Tác giả:</h6>
+                        <h6 class="" id="book-authors"></h6>
+                    </div>
+                    <div class="d-flex">
+                        <h6 class="mr-2">Thể loại:</h6>
+                        <h6 class="" id="book-types"></h6>
+                    </div>
+                    <div class="d-flex">
+                        <h6 class="mr-2">Số chương:</h6>
+                        <h6 class="" id="book-chapter"></h6>
+                    </div>
+                    <div class="d-flex">
+                        <h6 class="mr-2">Lượt xem:</h6>
+                        <h6 class="" id="book-total-view"></h6>
+                    </div>
+                    <div class="d-flex">
+                        <button class="btn btn-outline-primary mr-2">
+                            Đọc ngay
+                        </button>
+                        <button class="btn btn-outline-success">
+                            Thêm vào tủ sách
+                        </button>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <p id="book-intro">
+                    </p>
+                    <br/>
+                    <small><i>Chân thành cảm ơn tất cả!</i></small>
+                    <br/>
+                    <b><i>Chúc bạn có những giây phút vui vẻ khi đọc truyện!</i></b>
+                </div>
+                <div class="col-12">
+                    <h4>SÁCH, TRUYỆN CÙNG THỂ LOẠI</h4>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-6 mb-4">
+                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
+                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
+                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-6 mb-4">
+                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
+                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
+                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-6 mb-4">
+                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
+                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
+                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-6 mb-4">
+                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
+                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
+                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-3 col-12" id="hottest-books">
+        </div>
+    </div>
+</div>
+</div>
+<div th:replace="common/footer.html"></div>
+</body>
+
+<script>
+    const bookId = "[[${bookId}]]"
+    $(document).ready(function () {
+        loadListBookHottest()
+        MyAjax.get(`/api/books/${bookId}`,
+            function (book) {
+                $("#book-avt").html("")
+                $("#book-avt").append(` <img alt="${book.name}" class="img-thumbnail w-100"
+                         src="${book.avatar}">`)
+                $("#book-name").text(book.name)
+                $("#book-chapter").text(book.totalChapter)
+                $("#book-total-view").text(book.totalView)
+                $("#book-intro").text(book.intro)
+                $("#book-authors").text(book.authors)
+                $("#book-types").text(book.types)
+            }, function (xhr) {
+                const status = xhr.status
+                if (statusCode && statusCode === 404) {
+                    MyAjax.notify('Không tìm thấy thông tin sách!', 'error')
+                } else {
+                    MyAjax.notify('Lỗi hệ thống! ', 'error')
+                }
+            })
+    })
+
+    const hottestBooks = $("#hottest-books")
+    function loadListBookHottest() {
+        MyAjax.get("/api/books/list-hottest",
+            function (response) {
+                const hottestBook = response.hottestBook
+                hottestBooks.html("")
+                hottestBooks.append(`<h6 class="search-option">SÁCH, TRUYỆN XEM NHIỀU</h6>`)
+                let bookId = 1;
+                for (const book of hottestBook) {
+                    hottestBooks.append(`
+                  <div class="book-ranking-outline">
+                <div class="book-ranking-info">
+                    <div class="book-ranking">
+                        ${bookId}
+                    </div>
+                    <h6 class="book-display-name" id="book_name">
+                        ${book.name}
+                    </h6>
+                </div>
+            </div>
+                    `)
+                    bookId++;
+                }
+            }
+        )
+    }
+
+</script>
+</html>

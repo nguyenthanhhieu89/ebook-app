@@ -15,8 +15,8 @@
             <p class="book-introduce" id="book-sug-intro"></p>
         </div>
     </div>
-    <div class="w-100 d-flex justify-content-center align-items-center">
-        <button class="btn btn-outline-primary" onclick="clickReadBook()">Đọc Ngay</button>
+    <div class="w-100 d-flex justify-content-center align-items-center" id="read-book-sug">
+
     </div>
 
     <hr/>
@@ -46,20 +46,24 @@
     const bookSugName = $("#book-sug-name")
     const bookSugIntro = $("#book-sug-intro")
     const latestBooks = $("#latest-books")
-    const hottestBooks =$("#hottest-books")
+    const hottestBooks = $("#hottest-books")
+    const readBookSug = $("#read-book-sug")
+
     function loadBookGeneralApi() {
         MyAjax.get("/api/books/general",
             function (response) {
                 const bookSuggestion = response.bookSuggestion
                 bookSugAvt.html("")
                 bookSugAvt.append(`<img alt="${bookSuggestion.name}" class="img-thumbnail" src="${bookSuggestion.avatar}">`)
+                readBookSug.html("")
+                readBookSug.append(`<button class="btn btn-outline-primary" onclick="MyAjax.getBookDetail('${bookSuggestion.id}')">Đọc Ngay</button>`)
                 bookSugName.text(bookSuggestion.name)
                 bookSugIntro.text(bookSuggestion.intro)
 
                 const latestBooksData = response.latestBooks
                 latestBooks.html("")
                 for (const book of latestBooksData) {
-                    latestBooks.append(`<div class="col-lg-2 col-md-3 col-6 mb-4"> <img alt="${book.name}"
+                    latestBooks.append(`<div class="col-lg-2 col-md-3 col-6 mb-4 cur-pointer" onclick="MyAjax.getBookDetail('${book.id}')"> <img alt="${book.name}"
                     class="img-thumbnail w-100 h-210px"
                     src="${book.avatar}">
                     <h6 class="book-title">${book.name}</h6>
@@ -69,7 +73,7 @@
                 const hottestBooksData = response.hottestBooks
                 hottestBooks.html("")
                 for (const book of hottestBooksData){
-                    hottestBooks.append(`<div class="col-lg-2 col-md-3 col-6 mb-4">
+                    hottestBooks.append(`<div class="col-lg-2 col-md-3 col-6 mb-4 cur-pointer" onclick="MyAjax.getBookDetail('${book.id}')">
                             <img alt="${book.name}" class="img-thumbnail w-100 h-210px"
                             src="${book.avatar}">
                             <div class="d-flex view-count">

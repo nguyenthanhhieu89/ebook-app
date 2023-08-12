@@ -120,6 +120,7 @@ html, body {
 .book-ranking {
     width: 25px;
     height: 25px;
+    min-width: 25px;
     text-align: center;
     line-height: 22px;
     font-weight: 700;
@@ -199,4 +200,13 @@ h6.book-display-name {
 
 .h-210px {
     height: 210px;
+}
+
+.cur-pointer{
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.cur-pointer:hover{
+    box-shadow: 18px 7px 32px 3px rgba(0,0,0,0.1);
 }
