@@ -44,6 +44,22 @@ const MyAjax = function () {
         });
     }
 
+    function doPatch(url, data, doSuccess, doError) {
+        $.ajax({
+            type: "PATCH",
+            url: url,
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            data: data,
+            success: (response) => {
+                doSuccess && doSuccess(response);
+            },
+            error: (xhr, status, error) => {
+                doError && doError(xhr, status, error);
+            }
+        });
+    }
+
     function doDelete(url, data, doSuccess, doError) {
         $.ajax({
             type: "DELETE",
@@ -75,6 +91,7 @@ const MyAjax = function () {
         post: doPost,
         put: doPut,
         delete: doDelete,
+        patch: doPatch,
         notify : toastShowNotification,
         getBookDetail : getBookDetail
     }

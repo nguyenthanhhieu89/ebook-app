@@ -3,10 +3,7 @@ package com.hieunt.ebookapp.services;
 import com.hieunt.ebookapp.entities.Author;
 import com.hieunt.ebookapp.entities.Book;
 import com.hieunt.ebookapp.entities.BookType;
-import com.hieunt.ebookapp.payloads.AddAuthorRequest;
-import com.hieunt.ebookapp.payloads.BookDetailResponse;
-import com.hieunt.ebookapp.payloads.BookGeneralResponse;
-import com.hieunt.ebookapp.payloads.BookHottestResponse;
+import com.hieunt.ebookapp.payloads.*;
 import com.hieunt.ebookapp.repositories.AuthorRepository;
 import com.hieunt.ebookapp.repositories.BookRepository;
 import com.hieunt.ebookapp.repositories.BookTypeRepository;
@@ -108,6 +105,20 @@ public class BookService {
         String types = String.join(", ", bookTypes);
         String author = String.join(", ",authors);
         return new BookDetailResponse(book,author,types);
+    }
+
+    public void updateTotalView(String bookID){
+        Optional<Book> optionalBook = bookRepository.findById(bookID);
+        Book book = optionalBook.get();
+        book.setTotalView(book.getTotalView() + 1);
+        bookRepository.save(book);
+    }
+
+    public List<Book> getBookSameType(String bookId) {
+        Optional<Book> optionalBook = bookRepository.findById(bookId);
+        Book book = optionalBook.get();
+        Set<String> bookTypes = book.getBookTypes();
+        return customBookRepository.getByTypes(bookTypes);
     }
 
 }

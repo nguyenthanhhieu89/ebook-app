@@ -2,10 +2,7 @@ package com.hieunt.ebookapp.controllers;
 
 import com.hieunt.ebookapp.entities.Author;
 import com.hieunt.ebookapp.entities.Book;
-import com.hieunt.ebookapp.payloads.AddAuthorRequest;
-import com.hieunt.ebookapp.payloads.BookDetailResponse;
-import com.hieunt.ebookapp.payloads.BookGeneralResponse;
-import com.hieunt.ebookapp.payloads.BookHottestResponse;
+import com.hieunt.ebookapp.payloads.*;
 import com.hieunt.ebookapp.services.BookService;
 import com.hieunt.ebookapp.services.BookTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -86,14 +85,32 @@ public class BookController {
     }
 
     @GetMapping(value = "/books/{id}")
-    public ResponseEntity<BookDetailResponse> getBookDetailBy(@PathVariable String id){
+    public ResponseEntity<BookDetailResponse> getBookDetailBy(@PathVariable String id) {
         try {
             BookDetailResponse response = bookService.getBookById(id);
             return ResponseEntity.ok(response);
-        }catch (HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PatchMapping(value = "/books/{id}")
+    public ResponseEntity<?> updateTotalView(@PathVariable String id) {
+        bookService.updateTotalView(id);
+        return ResponseEntity.ok(null);
+    }
+
+    //TODO: Get Book same type
+    @GetMapping(value = "/books/{id}/same-type")
+    public ResponseEntity<?> getBookSameType(@PathVariable String id) {
+        try {
+            List<Book> books = bookService.getBookSameType(id);
+            return ResponseEntity.ok(books);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

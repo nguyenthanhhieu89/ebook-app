@@ -29,7 +29,7 @@
                         <h6 class="mr-2">Lượt xem:</h6>
                         <h6 class="" id="book-total-view"></h6>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex" id="action-div">
                         <button class="btn btn-outline-primary mr-2">
                             Đọc ngay
                         </button>
@@ -48,27 +48,7 @@
                 </div>
                 <div class="col-12">
                     <h4>SÁCH, TRUYỆN CÙNG THỂ LOẠI</h4>
-                    <div class="row">
-                        <div class="col-lg-3 col-md-3 col-6 mb-4">
-                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
-                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
-                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-6 mb-4">
-                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
-                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
-                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-6 mb-4">
-                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
-                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
-                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-6 mb-4">
-                            <img alt=" Tiểu Yêu Thê Convert" class="img-thumbnail w-100"
-                                 src="https://docsach24.co/filemanager/data-images/tieu-yeu-the-convert.jpg">
-                            <h6 class="book-title">Tiểu Yêu Thê Convert</h6>
-                        </div>
+                    <div class="row" id="books-same-type">
                     </div>
                 </div>
             </div>
@@ -86,6 +66,31 @@
     const bookId = "[[${bookId}]]"
     $(document).ready(function () {
         loadListBookHottest()
+        loadBookDetailInfo()
+        loadBookSameTypes()
+    })
+
+    function loadBookSameTypes() {
+        MyAjax.get(`/api/books/${bookId}/same-type`,
+            function (books) {
+                console.log(books)
+                $("#books-same-type").html("")
+                for (const book of books) {
+                    $("#books-same-type").append(
+                        `  <div class="col-lg-3 col-md-3 col-6 mb-4">
+                            <img alt="${book.name}" class="img-thumbnail w-100"
+                            src="${book.avatar}">
+                            <h6 class="book-title">${book.name}</h6>
+                        </div>`
+                    )
+                }
+            }, function (xhr) {
+                MyAjax.notify("Lỗi hệ thống!", "errors")
+            }
+        )
+    }
+
+    function loadBookDetailInfo() {
         MyAjax.get(`/api/books/${bookId}`,
             function (book) {
                 $("#book-avt").html("")
@@ -97,17 +102,29 @@
                 $("#book-intro").text(book.intro)
                 $("#book-authors").text(book.authors)
                 $("#book-types").text(book.types)
+                $("#action-div").html("")
+                $("#action-div").append(
+                    `
+                    <button class="btn btn-outline-primary mr-2" onclick="readBookFrom('${book.url}', '${bookId}')">
+                            Đọc ngay
+                    </button>
+                    <button class="btn btn-outline-success" >
+                            Thêm vào tủ sách
+                    </button>
+                    `
+                )
             }, function (xhr) {
                 const status = xhr.status
-                if (statusCode && statusCode === 404) {
+                if (status && status === 404) {
                     MyAjax.notify('Không tìm thấy thông tin sách!', 'error')
                 } else {
                     MyAjax.notify('Lỗi hệ thống! ', 'error')
                 }
             })
-    })
+    }
 
     const hottestBooks = $("#hottest-books")
+
     function loadListBookHottest() {
         MyAjax.get("/api/books/list-hottest",
             function (response) {
@@ -118,18 +135,42 @@
                 for (const book of hottestBook) {
                     hottestBooks.append(`
                   <div class="book-ranking-outline">
-                <div class="book-ranking-info">
-                    <div class="book-ranking">
-                        ${bookId}
+                    <div class="book-ranking-info">
+                        <div class="book-ranking">
+                            ${bookId}
+                        </div>
+                        <h6 class="book-display-name" id="book_name">
+                            ${book.name}
+                        </h6>
                     </div>
-                    <h6 class="book-display-name" id="book_name">
-                        ${book.name}
-                    </h6>
-                </div>
-            </div>
+                   </div>
                     `)
                     bookId++;
                 }
+            }
+        )
+    }
+
+    function readBookFrom(url, bookId) {
+        // Clear UI
+        $("#book-intro").html("")
+
+        // Fetch the content of the TXT file
+        fetch(url)
+            .then(response => response.text())
+            .then(txtContent => {
+                $("#book-intro").html(txtContent);
+            })
+            .catch(error => {
+                console.error("Error fetching TXT content:", error);
+            });
+
+        // Done load truyện
+        MyAjax.patch(`/api/books/${bookId}`, null,
+            function () {
+            },
+            function (xhr) {
+                MyAjax.notify('Lỗi hệ thống! ', 'error')
             }
         )
     }
