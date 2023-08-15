@@ -121,4 +121,9 @@ public class BookService {
         return customBookRepository.getByTypes(bookTypes);
     }
 
+    public QueryBookResponse queryBookBy(QueryBookRequest request) {
+        List<Book> books = customBookRepository.getBookListBy(request);
+        int total = customBookRepository.countBookListBy(request);
+        return new QueryBookResponse(books, total);
+    }
 }

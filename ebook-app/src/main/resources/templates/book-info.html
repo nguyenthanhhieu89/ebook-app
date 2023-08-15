@@ -134,12 +134,12 @@
                 let bookId = 1;
                 for (const book of hottestBook) {
                     hottestBooks.append(`
-                  <div class="book-ranking-outline">
+                  <div class="book-ranking-outline" onclick="MyAjax.getBookDetail('${book.id}')" style="cursor: pointer">
                     <div class="book-ranking-info">
                         <div class="book-ranking">
                             ${bookId}
                         </div>
-                        <h6 class="book-display-name" id="book_name">
+                        <h6 class="book-display-name" id="book_name" >
                             ${book.name}
                         </h6>
                     </div>

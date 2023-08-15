@@ -202,11 +202,15 @@ h6.book-display-name {
     height: 210px;
 }
 
-.cur-pointer{
+.cur-pointer {
     cursor: pointer;
     transition: 0.2s;
 }
 
-.cur-pointer:hover{
-    box-shadow: 18px 7px 32px 3px rgba(0,0,0,0.1);
+.cur-pointer:hover {
+    box-shadow: 18px 7px 32px 3px rgba(0, 0, 0, 0.1);
+}
+
+.img-thumbnail {
+    width: 100%;
 }

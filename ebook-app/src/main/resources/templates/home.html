@@ -63,7 +63,8 @@
                 const latestBooksData = response.latestBooks
                 latestBooks.html("")
                 for (const book of latestBooksData) {
-                    latestBooks.append(`<div class="col-lg-2 col-md-3 col-6 mb-4 cur-pointer" onclick="MyAjax.getBookDetail('${book.id}')"> <img alt="${book.name}"
+                    latestBooks.append(`<div class="col-lg-2 col-md-3 col-6 mb-4 cur-pointer" onclick="MyAjax.getBookDetail('${book.id}')">
+                    <img alt="${book.name}"
                     class="img-thumbnail w-100 h-210px"
                     src="${book.avatar}">
                     <h6 class="book-title">${book.name}</h6>

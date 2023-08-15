@@ -1,6 +1,7 @@
 package com.hieunt.ebookapp.repositories;
 
 import com.hieunt.ebookapp.entities.Book;
+import com.hieunt.ebookapp.payloads.QueryBookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -8,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,5 +45,35 @@ public class CustomBookRepoImpl implements CustomBookRepository {
         query.with(PageRequest.of(0, 4));
 
         return mongoTemplate.find(query, Book.class);
+    }
+
+    @Override
+    public List<Book> getBookListBy(QueryBookRequest request) {
+        Query query = new Query();
+        String keyword = request.getKeyword();
+        if (StringUtils.hasText(keyword)) {
+            Criteria criteria = new Criteria().orOperator(
+                    Criteria.where("name").regex(keyword),
+                    Criteria.where("intro").regex(keyword)
+            );
+            query.addCriteria(criteria);
+        }
+
+        query.with(PageRequest.of(request.getPage(), request.getSize()));
+        return mongoTemplate.find(query, Book.class);
+    }
+
+    @Override
+    public int countBookListBy(QueryBookRequest request) {
+        Query query = new Query();
+        String keyword = request.getKeyword();
+        if (StringUtils.hasText(keyword)) {
+            Criteria criteria = new Criteria().orOperator(
+                    Criteria.where("name").regex(keyword),
+                    Criteria.where("intro").regex(keyword)
+            );
+            query.addCriteria(criteria);
+        }
+        return (int) mongoTemplate.count(query, Book.class);
     }
 }

@@ -102,7 +102,6 @@ public class BookController {
         return ResponseEntity.ok(null);
     }
 
-    //TODO: Get Book same type
     @GetMapping(value = "/books/{id}/same-type")
     public ResponseEntity<?> getBookSameType(@PathVariable String id) {
         try {
@@ -113,4 +112,13 @@ public class BookController {
         }
     }
 
+    @PostMapping(value = "/books/query")
+    public ResponseEntity<?> queryBookByCondition(@RequestBody QueryBookRequest request) {
+        try {
+            QueryBookResponse response = bookService.queryBookBy(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
