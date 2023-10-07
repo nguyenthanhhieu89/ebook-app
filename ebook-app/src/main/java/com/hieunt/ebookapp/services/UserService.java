@@ -7,6 +7,8 @@ import com.hieunt.ebookapp.payloads.LoginRequest;
 import com.hieunt.ebookapp.payloads.ResetPassRequest;
 import com.hieunt.ebookapp.repositories.RoleRepository;
 import com.hieunt.ebookapp.repositories.UserRepository;
+import lombok.NonNull;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +24,8 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+
+import static com.hieunt.ebookapp.authen.OAuth2Service.GITHUB_OAUTH2_CLIENT_ID;
 
 @Service
 public class UserService {
@@ -66,6 +70,29 @@ public class UserService {
         List<String> roleUser = List.of(roleRepository.findByName("USER").getId());
         user.setRoles(roleUser);
         return userRepository.save(user);
+    }
+
+    public void createOAuth2User(@NonNull String username) {
+        User user = userRepository.findByEmail(username);
+        if (user != null) {
+            return;
+        }
+
+        user = new User();
+        user.setEmail(username);
+        user.setPassword(passwordEncoder.encode(GITHUB_OAUTH2_CLIENT_ID));
+        List<String> roleUser = List.of(roleRepository.findByName("USER").getId());
+        user.setRoles(roleUser);
+        user.setOauthType("OAUTH2");
+        userRepository.save(user);
+    }
+
+    public void authenticatedOAuth2Login(@NonNull String username) {
+        try {
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, Strings.EMPTY));
+        } catch (Exception e) {
+            throw new AuthenticationServiceException(e.getMessage());
+        }
     }
 
     public UserDetails authenticatedLogin(LoginRequest request) {
