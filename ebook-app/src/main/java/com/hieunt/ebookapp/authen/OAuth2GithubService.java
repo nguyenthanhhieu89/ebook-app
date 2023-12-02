@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 
 @Service
 @Slf4j
-public class OAuth2Service {
+public class OAuth2GithubService {
 
     public static final String GITHUB_OAUTH2_CLIENT_ID = "fb5ba42477df3b025569";
     private static final String GITHUB_OAUTH2_CLIENT_SECRET = "eeedd71d578dc03852ecfedb0d3afb45d4802bfc";
@@ -33,7 +33,6 @@ public class OAuth2Service {
     public String authorizeRequest() throws URISyntaxException {
         AuthenticationRequest.Builder requestBuilder = new AuthenticationRequest.Builder(ResponseType.CODE, new Scope(SCOPE_OPENID), new ClientID(GITHUB_OAUTH2_CLIENT_ID), new URI(CALLBACK_URL));
         State state = new State();
-
 
         AuthenticationRequest request = requestBuilder.endpointURI(new URI(GITHUB_AUTHORIZE_URL)).state(state).nonce(new Nonce()).build();
         return request.toURI().toString();

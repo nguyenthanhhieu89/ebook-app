@@ -25,7 +25,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static com.hieunt.ebookapp.authen.OAuth2Service.GITHUB_OAUTH2_CLIENT_ID;
+import static com.hieunt.ebookapp.authen.OAuth2GithubService.GITHUB_OAUTH2_CLIENT_ID;
 
 @Service
 public class UserService {
@@ -72,7 +72,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void createOAuth2User(@NonNull String username) {
+    public void createOAuth2User(@NonNull String username, @NonNull String defaultPassword) {
         User user = userRepository.findByEmail(username);
         if (user != null) {
             return;
@@ -80,7 +80,7 @@ public class UserService {
 
         user = new User();
         user.setEmail(username);
-        user.setPassword(passwordEncoder.encode(GITHUB_OAUTH2_CLIENT_ID));
+        user.setPassword(passwordEncoder.encode(defaultPassword));
         List<String> roleUser = List.of(roleRepository.findByName("USER").getId());
         user.setRoles(roleUser);
         user.setOauthType("OAUTH2");
